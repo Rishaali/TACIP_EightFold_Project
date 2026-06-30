@@ -1,126 +1,478 @@
-# TACIP — Trust-Aware Candidate Intelligence Pipeline
+# TACIP – Trust-Aware Candidate Intelligence Pipeline
 
-A modern, enterprise-grade AI recruitment platform that parses resumes, scores candidates, and delivers **runtime-configurable structured output** through a projection layer.
+## Project Overview
+
+TACIP (Trust-Aware Candidate Intelligence Pipeline) is a full-stack AI-powered candidate profile transformation system that converts resumes and structured recruiter data into a single trusted canonical candidate profile.
+
+The system accepts candidate information from multiple heterogeneous sources such as Resume PDFs, Resume URLs, and Recruiter CSV files, extracts meaningful information, normalizes all fields into a standard schema, calculates an explainable confidence score, generates AI-based insights, and produces configurable runtime outputs without modifying backend code.
+
+The entire pipeline is deterministic, explainable, scalable, and robust, ensuring that identical inputs always produce identical outputs.
 
 ---
 
-## 🚀 Running the Project
+# Features
 
-### Backend (Python FastAPI)
+## Candidate Data Ingestion
 
-```bash
-cd TransFlowNew/backend
-python -m venv .venv
-.venv\Scripts\pip install -r requirements.txt
-.venv\Scripts\uvicorn app:app --host 127.0.0.1 --port 8002 --reload
+Supports multiple input formats:
+
+- Upload Single Resume PDF
+- Upload Multiple Resume PDFs
+- Upload Resume using URL
+- Upload Recruiter CSV
+- Upload Resume + CSV Together
+
+---
+
+## Resume Parsing
+
+Automatically extracts:
+
+- Candidate Name
+- Email Address
+- Phone Number
+- Skills
+- Work Experience
+- Education
+- Certifications
+- Projects
+- Location
+
+---
+
+## Canonical Candidate Profile Generation
+
+Transforms extracted information into a standardized schema.
+
+Generated fields include:
+
+- candidate_id
+- full_name
+- emails
+- phones
+- location
+- links
+- headline
+- years_experience
+- skills
+- experience
+- education
+- provenance
+- overall_confidence
+
+---
+
+## Data Normalization
+
+Automatically standardizes:
+
+- Phone Numbers → E.164 Format
+- Skills → Canonical Skill Names
+- Dates → YYYY-MM
+- Removes duplicate values
+- Handles missing fields safely
+
+---
+
+## Explainable Confidence Score
+
+Each candidate receives a confidence score between **0–100** using a **Weighted Rule-Based Confidence Scoring Algorithm**.
+
+The score is calculated using:
+
+- Resume Completeness
+- Contact Information Quality
+- Skill Extraction Confidence
+- Experience Consistency
+- Education Completeness
+- Project Quality
+- Parsing Accuracy
+- Missing Field Penalty
+- Data Consistency
+
+Every score is completely explainable and deterministic.
+
+---
+
+## AI Candidate Analysis
+
+Automatically provides:
+
+- Candidate Strengths
+- Missing Information
+- Resume Quality
+- Skill Gaps
+- Improvement Suggestions
+- Selection Recommendation
+
+---
+
+## Runtime Projection Layer
+
+Users can dynamically configure the final output without changing backend code.
+
+Supported operations:
+
+- Select required fields
+- Rename fields
+- Map canonical paths
+- Enable/Disable Confidence Score
+- Enable/Disable Provenance
+- Configure Missing Value Policy
+- Preview Live JSON Output
+
+---
+
+## Candidate Dashboard
+
+Includes:
+
+- Candidate Search
+- Filter by Name
+- Filter by Confidence Score
+- Filter by Experience
+- Candidate Status
+- Export JSON
+- Export CSV
+- Export PDF
+
+---
+
+# Tech Stack
+
+## Frontend
+
+- React.js
+- TypeScript
+- Vite
+- CSS
+
+## Backend
+
+- Python
+- Flask
+- REST APIs
+
+## Parsing & AI
+
+- PyMuPDF
+- pdfplumber
+- Regex
+- NLP
+- Weighted Rule-Based Confidence Scoring
+- Rule Engine
+
+## Storage
+
+- JSON
+- CSV
+- Local File Storage
+
+---
+
+# Project Architecture
+
+```text
+                   +----------------------+
+                   |      React Frontend  |
+                   +----------+-----------+
+                              |
+                         REST API Calls
+                              |
+                   +----------v-----------+
+                   |    Flask Backend     |
+                   +----------+-----------+
+                              |
+                +-------------+-------------+
+                |                           |
+         Upload Controller         Config Controller
+                |                           |
+                +-------------+-------------+
+                              |
+                  Candidate Processing Engine
+                              |
+      +-----------+-----------+-----------+-----------+
+      |           |           |           |           |
+ Resume Parser  CSV Parser  URL Parser  Validator  Normalizer
+      |           |           |           |           |
+      +-----------+-----------+-----------+-----------+
+                              |
+                 Canonical Profile Builder
+                              |
+              Confidence Score Calculation
+                              |
+                  AI Analysis Generator
+                              |
+                Projection Configuration
+                              |
+                   JSON Output Generator
+                              |
+                 Export JSON / CSV / PDF
 ```
 
-Backend runs at: **http://127.0.0.1:8002**
+---
+
+# Pipeline Workflow
+
+```text
+Resume / CSV / URL Upload
+            │
+            ▼
+Resume Parsing
+            │
+            ▼
+Information Extraction
+            │
+            ▼
+Canonical Profile Generation
+            │
+            ▼
+Data Normalization
+            │
+            ▼
+Confidence Score Calculation
+            │
+            ▼
+AI Candidate Analysis
+            │
+            ▼
+Projection Layer Configuration
+            │
+            ▼
+Runtime Output Generation
+            │
+            ▼
+Export JSON / CSV / PDF
+```
 
 ---
 
-### Frontend (React + Vite + Tailwind)
+# Confidence Score Algorithm
+
+The system uses a **Weighted Rule-Based Confidence Scoring Algorithm**.
+
+| Feature | Weight |
+|----------|---------|
+| Resume Completeness | 25% |
+| Skill Extraction | 20% |
+| Contact Validation | 15% |
+| Experience Consistency | 15% |
+| Education Completeness | 10% |
+| Projects & Certifications | 10% |
+| Parsing Confidence | 5% |
+
+Final Score Formula:
+
+```text
+Confidence Score =
+Σ (Feature Weight × Feature Confidence)
+```
+
+Example:
+
+```text
+Resume Completeness       = 90 × 25%
+Skill Extraction          = 95 × 20%
+Contact Validation        = 100 × 15%
+Experience Consistency    = 80 × 15%
+Education Completeness    = 85 × 10%
+Projects                  = 75 × 10%
+Parsing Accuracy          = 95 × 5%
+
+Overall Confidence = 90.5 / 100
+```
+
+---
+
+# Edge Cases Handled
+
+The pipeline safely handles:
+
+- Empty Resume
+- Corrupted PDF
+- Invalid Resume URL
+- Empty CSV
+- Missing Contact Information
+- Missing Education
+- Missing Experience
+- Duplicate Skills
+- Duplicate Candidate Records
+- Invalid Phone Numbers
+- Multiple Email Addresses
+- Incomplete Candidate Profiles
+
+The system never crashes. Unknown values are stored as **NULL** instead of generating incorrect information.
+
+---
+
+# Folder Structure
+
+```text
+TransFlowNew/
+│
+├── backend/
+│   ├── schemas/
+│   ├── services/
+│   ├── uploads/
+│   ├── exports/
+│   ├── app.py
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── api.ts
+│   │   ├── App.tsx
+│   │   ├── main.tsx
+│   │   └── types.ts
+│   └── package.json
+│
+└── README.md
+```
+
+---
+
+# Installation
+
+## 1. Clone Repository
 
 ```bash
-cd TransFlowNew/frontend
+git clone https://github.com/yourusername/TACIP.git
+cd TACIP
+```
+
+---
+
+## 2. Backend Setup
+
+Navigate to backend
+
+```bash
+cd backend
+```
+
+Create virtual environment
+
+```bash
+python -m venv .venv
+```
+
+Activate virtual environment
+
+### Windows
+
+```bash
+.venv\Scripts\activate
+```
+
+### Linux / macOS
+
+```bash
+source .venv/bin/activate
+```
+
+Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+Run Flask server
+
+```bash
+python app.py
+```
+
+Backend will start on:
+
+```text
+http://localhost:5000
+```
+
+---
+
+## 3. Frontend Setup
+
+Navigate to frontend
+
+```bash
+cd frontend
+```
+
+Install dependencies
+
+```bash
 npm install
+```
+
+Run React application
+
+```bash
 npm run dev
 ```
 
-Frontend runs at: **http://localhost:5175**
+Frontend will start on:
 
----
-
-## 📂 Project Structure
-
-```
-TransFlowNew/
-├── backend/
-│   ├── app.py                      ← FastAPI main app (all routes)
-│   ├── requirements.txt
-│   ├── schemas/
-│   │   ├── candidate.py            ← Pydantic candidate model
-│   │   └── output_config.py        ← Runtime config schema
-│   └── services/
-│       ├── resume_parser.py        ← PDF parsing (regex heuristics)
-│       ├── csv_processor.py        ← CSV ingestion with column mapping
-│       ├── confidence_service.py   ← Jaccard Similarity + Weighted Sum scoring
-│       ├── ai_analysis.py          ← AI rating + suggestions by confidence
-│       ├── projection_service.py   ← Runtime output projection layer
-│       └── report_service.py       ← JSON / CSV / PDF export
-└── frontend/
-    └── src/
-        ├── pages/
-        │   ├── Dashboard.tsx       ← Home dashboard with KPI cards & table
-        │   ├── UploadPage.tsx      ← PDF / CSV / URL / Combined upload
-        │   ├── Pipeline.tsx        ← Real-time pipeline stage tracking
-        │   ├── CandidatesPage.tsx  ← Filterable candidate list
-        │   ├── CandidateProfile.tsx← Full profile + Projection layer UI
-        │   └── RuntimeConfig.tsx   ← Global output config editor
-        └── components/
-            ├── Sidebar.tsx
-            ├── Navbar.tsx
-            └── UI.tsx              ← StatusBadge, ConfidenceBar, StatCard
+```text
+http://localhost:5173
 ```
 
 ---
 
-## 🧠 Confidence Score Algorithm
+# How to Run the Project
 
-Uses **Jaccard Similarity + Weighted Heuristic Sum**:
-
-| Dimension              | Weight |
-|------------------------|--------|
-| Resume Completeness    | 30%    |
-| Skill Match (Jaccard)  | 25%    |
-| Experience Consistency | 20%    |
-| Education Completeness | 10%    |
-| Project Quality        | 10%    |
-| Contact Completeness   | 5%     |
-
-**Skill Match** uses Jaccard Similarity:
-```
-Jaccard = |Candidate_Skills ∩ Preferred_Skills| / |Candidate_Skills ∪ Preferred_Skills|
-```
+1. Start the Flask backend.
+2. Start the React frontend.
+3. Open the application in your browser.
+4. Upload Resume PDF, Resume URL, CSV, or Resume + CSV.
+5. The pipeline parses and extracts candidate information.
+6. A canonical candidate profile is generated.
+7. Confidence score is calculated.
+8. AI analysis is generated.
+9. Configure the Projection Layer.
+10. Preview the runtime JSON output.
+11. Export results as JSON, CSV, or PDF.
 
 ---
 
-## ⚙️ Runtime Output Configuration (Flagship Feature)
+# Output
 
-The projection layer reshapes API output **at runtime** without any backend code changes.
+The generated candidate profile contains:
 
-Example config:
-```json
-{
-  "fields": [
-    { "path": "candidate_id", "required": true },
-    { "path": "primary_email", "from_field": "emails[0]", "normalize": "lowercase" },
-    { "path": "phone", "from_field": "phones[0]", "normalize": "E164" },
-    { "path": "skills", "from_field": "skills", "normalize": "canonical" }
-  ],
-  "include_confidence": true,
-  "include_provenance": true,
-  "on_missing": "null"
-}
-```
+- Candidate Information
+- Contact Details
+- Skills
+- Work Experience
+- Education
+- Confidence Score
+- Provenance Metadata
+- AI Analysis
+- Configurable Runtime Output
 
 ---
 
-## 📡 API Endpoints
+# Future Enhancements
 
-| Method | Route | Description |
-|--------|-------|-------------|
-| POST | `/api/upload/pdf` | Upload single PDF resume |
-| POST | `/api/upload/pdfs` | Upload multiple PDF resumes |
-| POST | `/api/upload/csv` | Upload candidate CSV |
-| POST | `/api/upload/url` | Parse resume from URL |
-| GET | `/api/pipeline/{job_id}` | Get processing stage status |
-| GET | `/api/candidates` | List candidates (search + filter + sort) |
-| GET | `/api/candidates/{id}` | Get single candidate profile |
-| GET | `/api/candidates/stats` | Dashboard KPI stats |
-| GET | `/api/config` | Get runtime output config |
-| POST | `/api/config` | Save runtime output config |
-| POST | `/api/output/{id}` | Generate projected output for candidate |
-| GET | `/api/reports/json` | Download JSON report |
-| GET | `/api/reports/csv` | Download CSV report |
-| GET | `/api/reports/pdf` | Download PDF report |
+- LinkedIn Profile Integration
+- GitHub Profile Analysis
+- ATS JSON Import
+- Semantic Skill Matching using Embeddings
+- LLM-Based Resume Summarization
+- PostgreSQL / MongoDB Integration
+- User Authentication
+- Role-Based Access Control
+- Docker Deployment
+- Cloud Storage Integration
+
+---
+
+# Author
+
+**Rishaali R**
+
+### TACIP – Trust-Aware Candidate Intelligence Pipeline
+
+*A deterministic, explainable, and AI-powered candidate intelligence system that transforms heterogeneous recruitment data into trusted canonical candidate profiles with configurable runtime outputs.*
