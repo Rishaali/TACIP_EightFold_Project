@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+pymongo
+motor
+pdfplumber
+openpyxl
+pandas
+python-dotenv
+httpx
+reportlab
+phonenumbers
