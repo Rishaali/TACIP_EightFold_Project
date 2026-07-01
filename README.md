@@ -308,7 +308,7 @@ The system never crashes. Unknown values are stored as **NULL** instead of gener
 # Folder Structure
 
 ```text
-TransFlowNew/
+TACIP_EightFold_Project/
 │
 ├── backend/
 │   ├── schemas/
@@ -340,8 +340,8 @@ TransFlowNew/
 ## 1. Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/TACIP.git
-cd TACIP
+git clone https://github.com/Rishaali/TACIP.git
+cd TACIP_EightFold_Project
 ```
 
 ---
@@ -383,13 +383,13 @@ pip install -r requirements.txt
 Run Flask server
 
 ```bash
-python app.py
+.venv\Scripts\uvicorn app:app --host 127.0.0.1 --port 8002 --reload
 ```
 
 Backend will start on:
 
 ```text
-http://localhost:5000
+[http://localhost:800](http://127.0.0.1:8002)
 ```
 
 ---
@@ -417,7 +417,7 @@ npm run dev
 Frontend will start on:
 
 ```text
-http://localhost:5173
+http://localhost:5175
 ```
 
 ---
